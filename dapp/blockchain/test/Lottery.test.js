@@ -1,19 +1,20 @@
-const assert = require('assert');
-const ganache = require('ganache-cli');
-const Web3 = require('web3');
-const web3 = new Web3(ganache.provider());
+const { expect } = require( "chai");
 
-const { abi, evm } = require('../compile');
+const { ethers }= require("hardhat");
+const {Contract, ContractFactory, Signer} =require("ethers");
 
-let lottery;
-let accounts;
+
+let accounts= [];
+let Lottery = ContractFactory;
+let lottery = Contract;
 
 beforeEach(async () => {
-  accounts = await web3.eth.getAccounts();
+ // Get accounts
+ accounts = await ethers.getSigners();
 
-  lottery = await new web3.eth.Contract(abi)
-    .deploy({ data: evm.bytecode.object })
-    .send({ from: accounts[0], gas: '1000000' });
+  Lottery = await ethers.getContractFactory("Lottery");
+  lottery = await Lottery.deploy();
+  await lottery.deployed();
 });
 describe('Lottery Contract', () => {
   it('deploys a contract', () => {
